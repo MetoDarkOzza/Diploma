@@ -2,18 +2,22 @@ import cv2
 import time
 import sys
 import os
+import signature
 
 def stream():
     cap = cv2.VideoCapture(0)
     fps = 20.0
-    timepiece = 0.5
+    keylength = 160
+    timepiece = 1
     numFrames = fps * timepiece
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
     count = 0
     os.chdir('C:/Users/Кирилл/Desktop/video')
+    keys = signature.genKeys(keylength)
     while(cap.isOpened()):
         count += 1
         filename = 'vid' + str(count) + '.avi'
+        signature.writekeytofile(filename, keys[1])
         out = cv2.VideoWriter(filename,fourcc, fps, (640,480))
         for i in range(int(numFrames)):
             ret, frame = cap.read()
@@ -21,12 +25,16 @@ def stream():
                 # write the flipped frame
                 out.write(frame)
                 cv2.imshow('frame',frame)
-                if cv2.waitKey(20) & 0xFF == ord('q'):
+                if cv2.waitKey(40) & 0xFF == ord('q'):
                     out.release()
                     exit()
             else:
                 break
         out.release()
+        signature.createSignature(filename, keys[0])
+        keys = signature.genKeys(keylength)
+
+
 
 
     cap.release()

@@ -36,8 +36,8 @@ def genKeys(keylength):
 
     keys.append(secretkeys)
     keys.append(openkeys)
-    #print(keys[1])
-    #print(len(keys[1]), len(keys[0]))
+    print(keys[1])
+    print(len(keys[1]), len(keys[0]))
     return keys
 
 
@@ -97,8 +97,10 @@ def verify(signature, openkeys, filename):
         hasher.update(str(signature[i]).encode('utf8'))
         signlist.append(bin(int(hasher.hexdigest(), 16)))
         #print(bin(int(hasher.hexdigest(), 16)))
-    print(checker)
-    print(signlist)
+    # print('hello')
+    # print(checker)
+    # print('hello')
+    # print(signlist)
     if (checker == signlist):
         return 1
     else:
@@ -106,15 +108,14 @@ def verify(signature, openkeys, filename):
 
 
 def createSignature(filename,secretkey):
-    signaturefile = open('./signatures/signature' + str(filename) + '.txt', 'w')
+
+    signaturefile = open('./signatures/signature'+str(filename)+'.txt', 'w')
     filehash = getFileBinaryHash(filename)
     signature = sign(secretkey, filehash)
     for i in range(len(signature)):
         signaturefile.write(str(signature[i]) + '\n')
 
     signaturefile.close()
-
-
 
 def writekeytofile(filename, openkeys):
     keyfile = open('./openkeys/' + str(filename)+'openkey.txt', 'w')
@@ -124,6 +125,36 @@ def writekeytofile(filename, openkeys):
             keyfile.write(openkeys[i][j] + '\n')
 
     keyfile.close()
+
+def readopenkey(filename):
+    f = open('./openkeys/'+str(filename)+'openkey.txt','r')
+    openkey = []
+    buf = []
+    buf = f.readlines()
+    #print(buf)
+    for i in range(len(buf)):
+        buf[i] = buf[i].strip()
+    #print(buf)
+    for i in range(2,(len(buf)+2),2):
+        buf1 = []
+        buf1.append(buf[i-2])
+        buf1.append(buf[i-1])
+        openkey.append(buf1)
+
+
+    f.close()
+    return openkey
+
+
+def readsignature(filename):
+    f = open('./signatures/signature'+ str(filename)+'.txt')
+    signature = []
+    for line in f:
+        signature.append(line)
+    for i in range(len(signature)):
+        signature[i] = int(signature[i])
+    f.close()
+    return signature
 
 def main():
 
